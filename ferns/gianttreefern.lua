@@ -20,7 +20,7 @@ abstract_ferns.grow_giant_tree_fern = function(pos)
 		return
 	end
 
-	local size = math.random(12,16)	-- min of range must be >= 4
+	local size = math.random(4,11)	-- min of range must be >= 4
 	
 	local leafchecks = {
 		{

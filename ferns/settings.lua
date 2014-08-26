@@ -18,7 +18,7 @@ abstract_ferns.config = {}
 -- Which plants should generate/spawn?
 abstract_ferns.config.enable_lady_fern			= true
 abstract_ferns.config.enable_horsetails			= true
-abstract_ferns.config.enable_treefern			= true
+abstract_ferns.config.enable_treefern			= false
 abstract_ferns.config.enable_giant_treefern		= true
 
 -- Where should they generate/spawn? (if they generate/spawn)
@@ -26,11 +26,11 @@ abstract_ferns.config.enable_giant_treefern		= true
 --  Lady-Fern
 abstract_ferns.config.lady_ferns_near_tree = true
 abstract_ferns.config.lady_ferns_near_rock = true
-abstract_ferns.config.lady_ferns_near_ores = true				-- if there's a bunch of ferns there's ores nearby, this one causes a huge fps drop
-abstract_ferns.config.lady_ferns_in_groups = false				-- this one is meant as a replacement of Ferns_near_Ores: ferns tend to generate in groups, less fps drop, no hint for nearby ores
+abstract_ferns.config.lady_ferns_near_ores = false				-- if there's a bunch of ferns there's ores nearby, this one causes a huge fps drop
+abstract_ferns.config.lady_ferns_in_groups = true				-- this one is meant as a replacement of Ferns_near_Ores: ferns tend to generate in groups, less fps drop, no hint for nearby ores
 --
 --	Horsetails
-abstract_ferns.config.enable_horsetails_spawning	= false		-- horsetails will grow in already explored areas, over time, near water or gravel
+abstract_ferns.config.enable_horsetails_spawning	= true		-- horsetails will grow in already explored areas, over time, near water or gravel
 abstract_ferns.config.enable_horsetails_on_grass 	= true		-- on dirt with grass and swamp (sumpf mod)
 abstract_ferns.config.enable_horsetails_on_stones 	= true		-- on gravel, mossy cobble and silex (stoneage mod)
 --
@@ -40,4 +40,4 @@ abstract_ferns.config.enable_treeferns_in_oases 	= true		-- for oases and tropic
 --
 -- Giant_Tree_Fern
 abstract_ferns.config.enable_giant_treeferns_in_jungle	= true
-abstract_ferns.config.enable_giant_treeferns_in_oases	= true	-- for oases and tropical beaches
+abstract_ferns.config.enable_giant_treeferns_in_oases	= false	-- for oases and tropical beaches

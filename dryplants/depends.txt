@@ -1,3 +1,0 @@
-default
-farming
-plants_lib
