@@ -17,6 +17,7 @@ local BLOSSOM_DELAY = 3600
 local APPLE_CHANCE = 10
 local APPLE_SPREAD = 2
 
+--[[
 local function spawn_apple_under(pos)
     local below = {
 		x = pos.x,
@@ -27,6 +28,7 @@ local function spawn_apple_under(pos)
 		minetest.set_node(below, { name = "default:apple" })
     end
 end
+--]]
 
 minetest.register_node(":"..BLOSSOM_NODE, {
     description = "Apple blossoms",
@@ -43,6 +45,9 @@ minetest.register_craft({
     recipe = BLOSSOM_NODE,
     burntime = 2,
 })
+
+
+--[[
 
 -- Blossoming
 minetest.register_abm({
@@ -80,3 +85,5 @@ minetest.register_abm({
 		end
     end
 })
+
+--]]
