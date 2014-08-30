@@ -114,7 +114,7 @@ minetest.register_node("ferns:tree_fern_leaves_giant", {
 		items = {
 			{
 				items = {"ferns:sapling_giant_tree_fern"},
-				rarity = 40,
+				rarity = 5,
 			},
 			{
 				items = {"ferns:tree_fern_leaves_giant"},
