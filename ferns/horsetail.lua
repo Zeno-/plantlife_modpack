@@ -137,7 +137,7 @@ if abstract_ferns.config.enable_horsetails_on_stones == true then
 	plantslib:register_generate_plant({
 		surface = {
 			"default:gravel", -- roots go deep
-			"default:mossycobble",
+			--"default:mossycobble",
 			"stoneage:dirt_with_silex",
 			"stoneage:grass_with_silex",
 			"stoneage:sand_with_silex", -- roots go deep
