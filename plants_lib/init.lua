@@ -207,19 +207,21 @@ function plantslib:populate_surfaces(biome, nodes_or_function_or_model, snodes, 
 		local noise2 = plantslib.perlin_temperature:get2d({x=pos.x, y=pos.z})
 		local noise3 = plantslib.perlin_humidity:get2d({x=pos.x+150, y=pos.z+50})
 		local biome_surfaces_string = dump(biome.surface)
-		if ((not biome.depth and string.find(biome_surfaces_string, minetest.get_node(pos).name)) or (biome.depth and not string.find(biome_surfaces_string, minetest.get_node({ x = pos.x, y = pos.y-biome.depth-1, z = pos.z }).name)))
-		  and (not checkair or minetest.get_node(p_top).name == "air")
-		  and pos.y >= biome.min_elevation
-		  and pos.y <= biome.max_elevation
-		  and noise1 > biome.plantlife_limit
-		  and noise2 <= biome.temp_min
-		  and noise2 >= biome.temp_max
-		  and noise3 <= biome.humidity_min
-		  and noise3 >= biome.humidity_max
-		  and (not biome.ncount or #(minetest.find_nodes_in_area({x=pos.x-1, y=pos.y, z=pos.z-1}, {x=pos.x+1, y=pos.y, z=pos.z+1}, biome.neighbors)) > biome.ncount)
-		  and (not biome.near_nodes or #(minetest.find_nodes_in_area({x=pos.x-biome.near_nodes_size, y=pos.y-biome.near_nodes_vertical, z=pos.z-biome.near_nodes_size}, {x=pos.x+biome.near_nodes_size, y=pos.y+biome.near_nodes_vertical, z=pos.z+biome.near_nodes_size}, biome.near_nodes)) >= biome.near_nodes_count)
-		  and math.random(1,100) > biome.rarity
-		  and (not biome.below_nodes or string.find(dump(biome.below_nodes), minetest.get_node({x=pos.x, y=pos.y-1, z=pos.z}).name) )
+		local dest_node_name = minetest.get_node(pos).name
+		if ((not biome.depth and (string.find(biome_surfaces_string, dest_node_name)
+				or string.find(biome_surfaces_string, minetest.get_item_group(dest_node_name)))) or (biome.depth and not string.find(biome_surfaces_string, minetest.get_node({ x = pos.x, y = pos.y-biome.depth-1, z = pos.z }).name)))
+			and (not checkair or minetest.get_node(p_top).name == "air")
+			and pos.y >= biome.min_elevation
+			and pos.y <= biome.max_elevation
+			and noise1 > biome.plantlife_limit
+			and noise2 <= biome.temp_min
+			and noise2 >= biome.temp_max
+			and noise3 <= biome.humidity_min
+			and noise3 >= biome.humidity_max
+			and (not biome.ncount or #(minetest.find_nodes_in_area({x=pos.x-1, y=pos.y, z=pos.z-1}, {x=pos.x+1, y=pos.y, z=pos.z+1}, biome.neighbors)) > biome.ncount)
+			and (not biome.near_nodes or #(minetest.find_nodes_in_area({x=pos.x-biome.near_nodes_size, y=pos.y-biome.near_nodes_vertical, z=pos.z-biome.near_nodes_size}, {x=pos.x+biome.near_nodes_size, y=pos.y+biome.near_nodes_vertical, z=pos.z+biome.near_nodes_size}, biome.near_nodes)) >= biome.near_nodes_count)
+			and math.random(1,100) > biome.rarity
+			and (not biome.below_nodes or string.find(dump(biome.below_nodes), minetest.get_node({x=pos.x, y=pos.y-1, z=pos.z}).name) )
 		  then
 			in_biome_nodes[#in_biome_nodes + 1] = pos
 		end
