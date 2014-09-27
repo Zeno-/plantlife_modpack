@@ -149,7 +149,7 @@ function plantslib:register_generate_plant(biomedef, nodes_or_function_or_model)
 		plantslib.actionslist_no_aircheck[#plantslib.actionslist_no_aircheck + 1] = { biomedef, nodes_or_function_or_model }
 		local s = biomedef.surface
 		if type(s) == "string" then
-			if s and minetest.registered_nodes[s] then
+			if s and (minetest.registered_nodes[s] or string_starts(s, "group")) then
 				if not search_table(plantslib.surfaceslist_no_aircheck, s) then
 					plantslib.surfaceslist_no_aircheck[#plantslib.surfaceslist_no_aircheck + 1] = s
 				end
@@ -159,7 +159,7 @@ function plantslib:register_generate_plant(biomedef, nodes_or_function_or_model)
 		else
 			for i = 1, #biomedef.surface do
 				local s = biomedef.surface[i]
-				if s and minetest.registered_nodes[s] then
+				if s and (minetest.registered_nodes[s] or string_starts(s, "group")) then
 					if not search_table(plantslib.surfaceslist_no_aircheck, s) then
 						plantslib.surfaceslist_no_aircheck[#plantslib.surfaceslist_no_aircheck + 1] = s
 					end
@@ -173,7 +173,7 @@ function plantslib:register_generate_plant(biomedef, nodes_or_function_or_model)
 		plantslib.actionslist_aircheck[#plantslib.actionslist_aircheck + 1] = { biomedef, nodes_or_function_or_model }
 		local s = biomedef.surface
 		if type(s) == "string" then
-			if s and minetest.registered_nodes[s] then
+			if s and (minetest.registered_nodes[s] or string_starts(s, "group")) then
 				if not search_table(plantslib.surfaceslist_aircheck, s) then
 					plantslib.surfaceslist_aircheck[#plantslib.surfaceslist_aircheck + 1] = s
 				end
@@ -183,7 +183,7 @@ function plantslib:register_generate_plant(biomedef, nodes_or_function_or_model)
 		else
 			for i = 1, #biomedef.surface do
 				local s = biomedef.surface[i]
-				if s and minetest.registered_nodes[s] then
+				if s and (minetest.registered_nodes[s] or string_starts(s, "group")) then
 					if not search_table(plantslib.surfaceslist_aircheck, s) then
 						plantslib.surfaceslist_aircheck[#plantslib.surfaceslist_aircheck + 1] = s
 					end
