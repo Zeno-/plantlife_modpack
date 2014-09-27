@@ -120,6 +120,10 @@ local function search_table(t, s)
 	return false
 end
 
+local function string_starts(s, beginning)
+   return string.sub(s, 1, string.len(beginning)) == beginning
+end
+
 -- register the list of surfaces to spawn stuff on, filtering out all duplicates.
 -- separate the items by air-checking or non-air-checking map eval methods
 
@@ -191,6 +195,7 @@ function plantslib:register_generate_plant(biomedef, nodes_or_function_or_model)
 	end
 end
 
+
 function plantslib:populate_surfaces(biome, nodes_or_function_or_model, snodes, checkair)
 
 	plantslib:set_defaults(biome)
@@ -208,8 +213,21 @@ function plantslib:populate_surfaces(biome, nodes_or_function_or_model, snodes, 
 		local noise3 = plantslib.perlin_humidity:get2d({x=pos.x+150, y=pos.z+50})
 		local biome_surfaces_string = dump(biome.surface)
 		local dest_node_name = minetest.get_node(pos).name
-		if ((not biome.depth and (string.find(biome_surfaces_string, dest_node_name)
-				or string.find(biome_surfaces_string, minetest.get_item_group(dest_node_name)))) or (biome.depth and not string.find(biome_surfaces_string, minetest.get_node({ x = pos.x, y = pos.y-biome.depth-1, z = pos.z }).name)))
+
+		local surface_ok
+		if (not biome.depth and string.find(biome_surfaces_string, minetest.get_node(pos).name)) or (biome.depth and not string.find(biome_surfaces_string, minetest.get_node({ x = pos.x, y = pos.y-biome.depth-1, z = pos.z }).name)) then
+			surface_ok = true
+		else
+			surface_ok = false
+			for j = 1, #biome.surface do
+				if string_starts(biome.surface[j], "group") then
+					surface_ok = true
+					break
+				end
+			end
+		end
+
+		if surface_ok
 			and (not checkair or minetest.get_node(p_top).name == "air")
 			and pos.y >= biome.min_elevation
 			and pos.y <= biome.max_elevation
