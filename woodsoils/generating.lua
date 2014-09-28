@@ -80,7 +80,7 @@ plantslib:register_generate_plant({
 		"ferns:fern_02",
 		"ferns:fern_01"
 	},
-    max_count = 1000,
+    max_count = 80, --1000,
     rarity = 1,
     min_elevation = 1,
 	max_elevation = 40,
@@ -109,7 +109,7 @@ plantslib:register_generate_plant({
 		"moretrees:spruce_sapling_ongen",
 		"moretrees:willow_sapling_ongen"
 	},
-    max_count = 1000,
+    max_count = 80, --1000,
     rarity = 2,
     min_elevation = 1,
 	max_elevation = 40,
