@@ -38,7 +38,7 @@ else
     S = function ( s ) return s end
 end
 
-local DEBUG = false --... except if you want to spam the console with debugging info :-)
+local DEBUG = true --... except if you want to spam the console with debugging info :-)
 
 function plantslib:dbg(msg)
 	if DEBUG then
@@ -149,7 +149,7 @@ function plantslib:register_generate_plant(biomedef, nodes_or_function_or_model)
 		plantslib.actionslist_no_aircheck[#plantslib.actionslist_no_aircheck + 1] = { biomedef, nodes_or_function_or_model }
 		local s = biomedef.surface
 		if type(s) == "string" then
-			if s and (minetest.registered_nodes[s] or string_starts(s, "group")) then
+			if s and (string.find(s, "^group:") or minetest.registered_nodes[s]) then
 				if not search_table(plantslib.surfaceslist_no_aircheck, s) then
 					plantslib.surfaceslist_no_aircheck[#plantslib.surfaceslist_no_aircheck + 1] = s
 				end
@@ -159,7 +159,7 @@ function plantslib:register_generate_plant(biomedef, nodes_or_function_or_model)
 		else
 			for i = 1, #biomedef.surface do
 				local s = biomedef.surface[i]
-				if s and (minetest.registered_nodes[s] or string_starts(s, "group")) then
+				if s and (string.find(s, "^group:") or minetest.registered_nodes[s]) then
 					if not search_table(plantslib.surfaceslist_no_aircheck, s) then
 						plantslib.surfaceslist_no_aircheck[#plantslib.surfaceslist_no_aircheck + 1] = s
 					end
@@ -173,7 +173,7 @@ function plantslib:register_generate_plant(biomedef, nodes_or_function_or_model)
 		plantslib.actionslist_aircheck[#plantslib.actionslist_aircheck + 1] = { biomedef, nodes_or_function_or_model }
 		local s = biomedef.surface
 		if type(s) == "string" then
-			if s and (minetest.registered_nodes[s] or string_starts(s, "group")) then
+			if s and (string.find(s, "^group:") or minetest.registered_nodes[s]) then
 				if not search_table(plantslib.surfaceslist_aircheck, s) then
 					plantslib.surfaceslist_aircheck[#plantslib.surfaceslist_aircheck + 1] = s
 				end
@@ -183,7 +183,7 @@ function plantslib:register_generate_plant(biomedef, nodes_or_function_or_model)
 		else
 			for i = 1, #biomedef.surface do
 				local s = biomedef.surface[i]
-				if s and (minetest.registered_nodes[s] or string_starts(s, "group")) then
+				if s and (string.find(s, "^group:") or minetest.registered_nodes[s]) then
 					if not search_table(plantslib.surfaceslist_aircheck, s) then
 						plantslib.surfaceslist_aircheck[#plantslib.surfaceslist_aircheck + 1] = s
 					end
@@ -212,34 +212,40 @@ function plantslib:populate_surfaces(biome, nodes_or_function_or_model, snodes, 
 		local noise2 = plantslib.perlin_temperature:get2d({x=pos.x, y=pos.z})
 		local noise3 = plantslib.perlin_humidity:get2d({x=pos.x+150, y=pos.z+50})
 		local biome_surfaces_string = dump(biome.surface)
-		local dest_node_name = minetest.get_node(pos).name
+		local surface_ok = false
 
-		local surface_ok
-		if (not biome.depth and string.find(biome_surfaces_string, minetest.get_node(pos).name)) or (biome.depth and not string.find(biome_surfaces_string, minetest.get_node({ x = pos.x, y = pos.y-biome.depth-1, z = pos.z }).name)) then
-			surface_ok = true
-		else
-			surface_ok = false
-			for j = 1, #biome.surface do
-				if string_starts(biome.surface[j], "group") then
-					surface_ok = true
-					break
+		if not biome.depth then
+			local dest_node = minetest.get_node(pos)
+			if string.find(biome_surfaces_string, dest_node.name) then
+				surface_ok = true
+			else
+				if string.find(biome_surfaces_string, "group:") then
+					for j = 1, #biome.surface do
+						if string.find(biome.surface[j], "^group:") 
+						  and minetest.get_item_group(dest_node.name, biome.surface[j]) then
+							surface_ok = true
+							break
+						end
+					end
 				end
 			end
+		elseif not string.find(biome_surfaces_string, minetest.get_node({ x = pos.x, y = pos.y-biome.depth-1, z = pos.z }).name) then
+			surface_ok = true
 		end
 
 		if surface_ok
-			and (not checkair or minetest.get_node(p_top).name == "air")
-			and pos.y >= biome.min_elevation
-			and pos.y <= biome.max_elevation
-			and noise1 > biome.plantlife_limit
-			and noise2 <= biome.temp_min
-			and noise2 >= biome.temp_max
-			and noise3 <= biome.humidity_min
-			and noise3 >= biome.humidity_max
-			and (not biome.ncount or #(minetest.find_nodes_in_area({x=pos.x-1, y=pos.y, z=pos.z-1}, {x=pos.x+1, y=pos.y, z=pos.z+1}, biome.neighbors)) > biome.ncount)
-			and (not biome.near_nodes or #(minetest.find_nodes_in_area({x=pos.x-biome.near_nodes_size, y=pos.y-biome.near_nodes_vertical, z=pos.z-biome.near_nodes_size}, {x=pos.x+biome.near_nodes_size, y=pos.y+biome.near_nodes_vertical, z=pos.z+biome.near_nodes_size}, biome.near_nodes)) >= biome.near_nodes_count)
-			and math.random(1,100) > biome.rarity
-			and (not biome.below_nodes or string.find(dump(biome.below_nodes), minetest.get_node({x=pos.x, y=pos.y-1, z=pos.z}).name) )
+		  and (not checkair or minetest.get_node(p_top).name == "air")
+		  and pos.y >= biome.min_elevation
+		  and pos.y <= biome.max_elevation
+		  and noise1 > biome.plantlife_limit
+		  and noise2 <= biome.temp_min
+		  and noise2 >= biome.temp_max
+		  and noise3 <= biome.humidity_min
+		  and noise3 >= biome.humidity_max
+		  and (not biome.ncount or #(minetest.find_nodes_in_area({x=pos.x-1, y=pos.y, z=pos.z-1}, {x=pos.x+1, y=pos.y, z=pos.z+1}, biome.neighbors)) > biome.ncount)
+		  and (not biome.near_nodes or #(minetest.find_nodes_in_area({x=pos.x-biome.near_nodes_size, y=pos.y-biome.near_nodes_vertical, z=pos.z-biome.near_nodes_size}, {x=pos.x+biome.near_nodes_size, y=pos.y+biome.near_nodes_vertical, z=pos.z+biome.near_nodes_size}, biome.near_nodes)) >= biome.near_nodes_count)
+		  and math.random(1,100) > biome.rarity
+		  and (not biome.below_nodes or string.find(dump(biome.below_nodes), minetest.get_node({x=pos.x, y=pos.y-1, z=pos.z}).name) )
 		  then
 			in_biome_nodes[#in_biome_nodes + 1] = pos
 		end
@@ -393,7 +399,6 @@ function plantslib:generate_block_no_aircheck(dtime)
 
 		else
 			if plantslib.actioncount_no_aircheck.blockhash <= #plantslib.actionslist_no_aircheck then
-				local action = plantslib.actioncount_no_aircheck.blockhash
 				plantslib:populate_surfaces(
 					plantslib.actionslist_no_aircheck[plantslib.actioncount_no_aircheck.blockhash][1],
 					plantslib.actionslist_no_aircheck[plantslib.actioncount_no_aircheck.blockhash][2],
